@@ -1,5 +1,5 @@
 STATUS: DONE - #4806 fix on contrib/svg-text-transform (1766173), re-authored as ahmed0magdy and force-pushed; no PR opened
-UPDATED: 2026-10-13T13:52:49Z
+UPDATED: 2026-10-13T23:37:09Z
 BRANCH: contrib/svg-text-transform
 MODE: Auto
 
@@ -67,6 +67,13 @@ Title: `fix(io): SVG text placed by a transform keeps it on import (#4806)`
   environment (network policy); CI runs them.
 - **Fixes #4806**
 - **AI disclosure:** AI-assisted; the commit carries `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+
+## Session rules acknowledged
+
+- No pull requests or issues have been opened, reopened or commented on, on the fork or upstream. None will be; you open upstream PRs (as drafts) yourself.
+- No check-ins, wakeups, loops or routines have been scheduled, and none will be.
+- The only pushes this session made: `contrib/svg-text-transform` (the fix) and `notes/status` (this file).
+- Work is DONE. The session is idle until you send new instructions.
 
 ## Explain it to the owner
 
