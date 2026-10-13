@@ -38,10 +38,10 @@ Not done: the `log/devlog.md` entry. `log/` is gitignored, so it can't travel wi
 ## Things for you to check
 
 1. **Commit author: done.** Per your standing instruction, the repo's git identity is now
-   \`ahmed0magdy <110637215+ahmed0magdy@users.noreply.github.com>\`, and the commit was re-authored
-   (author and committer) as 1766173. The \`Co-Authored-By: Claude Opus 5.5\` trailer is kept, and there is no
-   \`Claude-Session:\` trailer. The file tree is byte-identical to 58a82b1. Re-checked: fmt clean,
-   clippy clean, svg tests 17/17 pass. Pushed with \`--force-with-lease\` to contrib/svg-text-transform only.
+   `ahmed0magdy <110637215+ahmed0magdy@users.noreply.github.com>`, and the commit was re-authored
+   (author and committer) as 1766173. The `Co-Authored-By: Claude Opus 5.5` trailer is kept, and there is no
+   `Claude-Session:` trailer. The file tree is byte-identical to 58a82b1. Re-checked: fmt clean,
+   clippy clean, svg tests 17/17 pass. Pushed with `--force-with-lease` to contrib/svg-text-transform only.
 2. **Credit:** nothing was added to contributors/people.toml, as you asked.
 3. **Scope:** I couldn't read the #4806 issue body. If the reporter's file fails for a different
    reason (for example, no usable font), this fix won't cover it. Worth asking them for a sample.
