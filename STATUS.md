@@ -1,29 +1,69 @@
-STATUS: WORKING - fixing #4806 (SVG text placed by a transform is lost on import); fix + test done, running gates
-UPDATED: 2026-10-13T07:29:39Z
+STATUS: DONE - #4806 fixed on contrib/svg-text-transform (58a82b1), pushed; corpus gate blocked by egress policy; no PR opened
+UPDATED: 2026-10-13T13:46:16Z
 BRANCH: contrib/svg-text-transform
 MODE: Auto
 
-## Pick: #4806, SVG text elements are not rendered when opening/dropping an SVG
+## Result
 
-Reproduced on main (f57db2b). Any `<text>` positioned by a `transform` (its own or an ancestor
-group's) loses that transform on import. Illustrator writes every text element as
-`transform="matrix(1 0 0 1 x y)"`, so such text lands off the canvas (invisible) or at the wrong
-place/size. Example on main: `<text transform="translate(10 40)">` imports with no visible pixels;
-resvg draws it at (12,23)-(39,39).
+Fixed **#4806** (SVG text not rendered when opening or dropping an SVG) on
+`contrib/svg-text-transform`, one commit (58a82b1) on top of main f57db2b. Pushed to origin. No PR opened.
+Nothing added to contributors/people.toml.
 
-Cause: usvg 0.45 builds `Text::flattened()` glyph outlines with identity `abs_transform`s, and
-`crates/io/src/svg.rs` converted paths with `abs_transform()`. Fix: compose each node's transform
-from its parent chain (identical result outside text), and size raster fallbacks from that.
+**Cause:** any SVG `<text>` positioned by a `transform` (its own, or an ancestor group's) lost it on
+import. usvg 0.45 leaves the glyph outlines in `Text::flattened()` with identity absolute
+transforms, and `crates/io/src/svg.rs` read `abs_transform()`. Illustrator writes every text
+element as `transform="matrix(1 0 0 1 x y)"`, so that text landed off the canvas (invisible) or
+at its untransformed place and size. On main, `<text transform="translate(10 40)">` imports with
+no visible pixels, while resvg draws it at (12,23)-(39,39).
 
-Test: new `transformed_text_lands_where_resvg_draws_it` in `crates/io/tests/svg.rs` (translate,
-matrix, translate + x/y, scale, translated group, nested rotate) compares against resvg's render.
-It fails on main and passes with the fix.
+**Fix:** the converter composes each node's transform from its parent chain (the same value as
+`abs_transform()` outside text), and sizes raster fallbacks from that transform.
 
-Gates so far:
-- cargo fmt --check: clean
-- cargo clippy -p photocraft-io --all-targets -D warnings: clean
-- cargo test -p photocraft-io: 553 passed, 0 failed, 5 ignored (pre-existing, need external files or ~12 GB)
-- cargo xtask layers: OK
+## Gates (exact results)
 
-Still to run: cargo xtask wasm, cargo xtask test-corpus. Then commit, push the branch, and post PR notes here.
-No PR will be opened, and nothing was added to contributors/people.toml.
+| Gate | Result |
+|---|---|
+| `cargo fmt -p photocraft-io -- --check` | clean |
+| `cargo clippy -p photocraft-io --all-targets -- -D warnings` | clean |
+| `cargo test -p photocraft-io` | 553 passed, 0 failed, 5 ignored (pre-existing: need external Camera Raw / Krita / Paint.NET files or ~12 GB) |
+| New test, without the fix | **fails** (imported text has no pixels; resvg draws it at 12,23-39,39) |
+| New test, with the fix | passes (svg.rs: 17 passed) |
+| `cargo xtask layers` | OK, 29 crates, no violations |
+| `cargo xtask wasm` | all ok |
+| `cargo xtask test-corpus` | **not run**: this VM's egress policy blocks www.schaik.com (PngSuite) and returns 403 for codeload.github.com (every pinned corpus). Upstream CI runs the corpus job on every PR. |
+| parity, panic_hunt, scorecard, perf | not applicable (no commands or numbers changed, no hot path) |
+
+Not done: the `log/devlog.md` entry. `log/` is gitignored, so it can't travel with the branch.
+
+## Things for you to check
+
+1. **Commit author.** The commit is authored as this session's git identity
+   (`Claude <noreply@anthropic.com>`) with a `Co-Authored-By: Claude Opus 5.5` trailer. For upstream
+   credit, re-author it as yourself before opening the PR:
+   `git commit --amend --reset-author --no-edit && git push --force-with-lease`
+   (it's your own branch with a single commit).
+2. **Credit:** nothing was added to contributors/people.toml, as you asked.
+3. **Scope:** I couldn't read the #4806 issue body. If the reporter's file fails for a different
+   reason (for example, no usable font), this fix won't cover it. Worth asking them for a sample.
+
+## PR notes (raw material, rewrite as you like)
+
+The project has no PR template and no rule about who writes the PR text.
+
+Title: `fix(io): SVG text placed by a transform keeps it on import (#4806)`
+
+- **What:** SVG `<text>` positioned by a `transform` (on the text or on an enclosing group) now
+  imports where it is drawn. Before, the transform was dropped, so the text was off the canvas
+  (nothing visible) or at the wrong place and size.
+- **Why:** usvg's `Text::flattened()` glyph outlines carry identity absolute transforms. The
+  importer now composes transforms from the parent chain instead of reading `abs_transform()`,
+  which gives the same values outside text, and sizes raster fallbacks the same way.
+- **Real-world trigger:** Illustrator exports every text element as `transform="matrix(1 0 0 1 x y)"`.
+- **Tests:** `transformed_text_lands_where_resvg_draws_it` (crates/io/tests/svg.rs) covers translate,
+  matrix, translate + x/y, scale, a translated group and a nested rotate. It compares the imported
+  layers with resvg's render of the same file (bounding box within 1 px, at least 70% pixel overlap),
+  fails on main and passes here. The full `cargo test -p photocraft-io` passes; clippy and fmt are
+  clean; `xtask layers` and `xtask wasm` pass. The corpus tests could not be fetched in my
+  environment (network policy); CI runs them.
+- **Fixes #4806**
+- **AI disclosure:** AI-assisted; the commit carries `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
