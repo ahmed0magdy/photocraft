@@ -1,12 +1,12 @@
-STATUS: DONE - #4806 fixed on contrib/svg-text-transform (58a82b1), pushed; corpus gate blocked by egress policy; no PR opened
-UPDATED: 2026-10-13T13:46:16Z
+STATUS: DONE - #4806 fix on contrib/svg-text-transform (1766173), re-authored as ahmed0magdy and force-pushed; no PR opened
+UPDATED: 2026-10-13T13:49:11Z
 BRANCH: contrib/svg-text-transform
 MODE: Auto
 
 ## Result
 
 Fixed **#4806** (SVG text not rendered when opening or dropping an SVG) on
-`contrib/svg-text-transform`, one commit (58a82b1) on top of main f57db2b. Pushed to origin. No PR opened.
+`contrib/svg-text-transform`, one commit (1766173, previously 58a82b1) on top of main f57db2b. Pushed to origin. No PR opened.
 Nothing added to contributors/people.toml.
 
 **Cause:** any SVG `<text>` positioned by a `transform` (its own, or an ancestor group's) lost it on
@@ -37,11 +37,11 @@ Not done: the `log/devlog.md` entry. `log/` is gitignored, so it can't travel wi
 
 ## Things for you to check
 
-1. **Commit author.** The commit is authored as this session's git identity
-   (`Claude <noreply@anthropic.com>`) with a `Co-Authored-By: Claude Opus 5.5` trailer. For upstream
-   credit, re-author it as yourself before opening the PR:
-   `git commit --amend --reset-author --no-edit && git push --force-with-lease`
-   (it's your own branch with a single commit).
+1. **Commit author: done.** Per your standing instruction, the repo's git identity is now
+   \`ahmed0magdy <110637215+ahmed0magdy@users.noreply.github.com>\`, and the commit was re-authored
+   (author and committer) as 1766173. The \`Co-Authored-By: Claude Opus 5.5\` trailer is kept, and there is no
+   \`Claude-Session:\` trailer. The file tree is byte-identical to 58a82b1. Re-checked: fmt clean,
+   clippy clean, svg tests 17/17 pass. Pushed with \`--force-with-lease\` to contrib/svg-text-transform only.
 2. **Credit:** nothing was added to contributors/people.toml, as you asked.
 3. **Scope:** I couldn't read the #4806 issue body. If the reporter's file fails for a different
    reason (for example, no usable font), this fix won't cover it. Worth asking them for a sample.
